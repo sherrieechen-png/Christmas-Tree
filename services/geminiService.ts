@@ -1,9 +1,19 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// Strictly follow instructions for API key access
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const analyzeWish = async (wish: string) => {
+  if (!process.env.API_KEY) {
+    console.warn("API_KEY is missing. Using fallback response.");
+    return { 
+      sentiment: 'luxurious', 
+      colorPalette: ['#064e3b', '#fbbf24'], 
+      message: "Elegance shines even in silence." 
+    };
+  }
+
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
@@ -25,6 +35,10 @@ export const analyzeWish = async (wish: string) => {
     return JSON.parse(response.text);
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
-    return { sentiment: 'luxurious', colorPalette: ['#064e3b', '#fbbf24'], message: "Arix signature elegance." };
+    return { 
+      sentiment: 'luxurious', 
+      colorPalette: ['#064e3b', '#fbbf24'], 
+      message: "Arix signature elegance." 
+    };
   }
 };
